@@ -12,12 +12,14 @@ class Simplex {
     protected $_boards;
     protected $_allDecisionVariables;
     protected $_allSlackVariables;
+    protected $_minMax;
     const MAX_INTERACTION = 20;
 
     public function __construct()
     {
         $this->_objectiveFunction = $_POST['objective_function'];
         $this->_restrictions = $_POST['restriction'];
+        $this->_minMax = $_POST['min_max'];
         $this->_initialBoard();
     }
 
@@ -50,18 +52,22 @@ class Simplex {
         return end($this->_boards);
     }
 
+    public function allBoards()
+    {
+        return $this->_boards;
+    }
+
     /**
      * Retorna as variaiveis e seus respectivos valores após finalizar o simples
      */
-    public function getFormattedResponse()
+    public function getFormattedResponse($board = null)
     {
-        $finalBoard = end($this->_boards);
-
+        $board = $board ?: $finalBoard = end($this->_boards);
         $result = [];
         $variables = array_merge($this->_allDecisionVariables, $this->_allSlackVariables);
         foreach ($variables as $variable) {
             $result[$variable] = 0;
-            foreach ($finalBoard as $row => $columns) {
+            foreach ($board as $row => $columns) {
                 if ($columns[0] == $variable) {
                     $result[$variable] = end($columns);
                     continue;
@@ -69,7 +75,7 @@ class Simplex {
             }
         }
 
-        $result['LUCRO'] = $finalBoard[$this->getRestrictionQty()][$this->getRestrictionQty() + $this->getVariableQty() + 1];
+        $result['LUCRO'] = $board[$this->getRestrictionQty()][$this->getRestrictionQty() + $this->getVariableQty() + 1];
         return $result;
     }
     /**

@@ -53,7 +53,41 @@ $variables = $simplex->getFormattedResponse();
                         </tbody>
                     </table>
 
-                    <?php $simplex->getFormattedResponse();?>
+                    <div id="step_by_step" class="justify-content-center" style="display: block !important">
+                        <button type="button" onclick="showStepBoards()" class="btn first-step-button">
+                            Exibir passo a passo 
+                        </button>
+
+                        <div id="step_boards" style="display: none">
+                            <?php $count = 0; ?>                
+                            <?php foreach($simplex->allBoards() as $board) : ?>
+                            <h4><?= !$count ? 'Quadro Inicial' : "Quadro" . $count; ?></h4>
+                            <table class="table table-bordered table-light">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">BASE</th>
+                                            <?php $variables = $simplex->getFormattedResponse($board); ?>
+                                            <?php foreach ($variables as $key => $label) : ?>
+                                                <th scope="col"><?= $key == 'LUCRO' ? 'B' : $key ?></th>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    </thead>
+                                <tbody>
+                                        
+                                    <?php foreach ($board as $key => $row) : ?>
+                                        <tr>
+                                            <?php foreach ($row as $key => $label) : ?>
+                                                <th scope="row"><?= $label ?></th>
+                                                <?php endforeach; ?>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>       
+                            <br>
+                            <?php $count++;?>
+                            <?php endforeach;?>
+                        </div>
+                     </div>
 
                     <div id="resolution_button" class="d-flex justify-content-center">
                         <button type="button" onclick="window.location.href='index.php'" class="btn btn-primary first-step-button">
@@ -64,4 +98,5 @@ $variables = $simplex->getFormattedResponse();
             </div>
         </div>
     </body>
+    
 </html>

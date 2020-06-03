@@ -89,3 +89,7 @@ function cleanSimplexData() {
     document.getElementById('objective_function_div').style.visibility = 'hidden';
     document.getElementById('restrictions_div').style.visibility = 'hidden';
 }
+
+function showStepBoards() {
+    document.getElementById('step_boards').style.display = 'block';
+};

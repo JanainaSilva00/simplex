@@ -25,6 +25,12 @@
                                 <label for="restriction_qty">Quantidade de Restrições</label>
                                 <input type="number" class="form-control" id="restriction_qty" min="1" required>
                             </div>
+                            <div class="form-group col-md-4" >
+                                <select name="min_max" class="browser-default custom-select" >
+                                    <option value="1">Maximizar</option>
+                                    <option value="0">Minimizar</option>
+                                </select>
+                            </div>
                             <div class="form-group col-md-4 align-self-end">
                                 <button type="button" class="btn btn-primary first-step-button" onclick="nextStep()">
                                     Próximo Passo
@@ -38,7 +44,8 @@
                             </div>
                         </div>
 
-                        <div id="restrictions_div" class="formula-div" style="visibility:hidden;">
+                        <div id="restrictions_div" clas
+                             hs="formula-div" style="visibility:hidden;">
                             <label>Restrições</label>
                             <div id="restrictions">
                             </div>
