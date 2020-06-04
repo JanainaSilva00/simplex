@@ -3,6 +3,7 @@ include 'simplex.php';
 $simplex = new Simplex();
 $finalBoardData = $simplex->getSimplexResolution();
 $variables = $simplex->getFormattedResponse();
+$multiple = $simplex->getMin() ? -1 : 1;
 ?>
 <!doctype html>
 <html>
@@ -38,14 +39,14 @@ $variables = $simplex->getFormattedResponse();
                         <tr>
                             <th scope="col">BASE</th>
                                 <?php foreach ($variables as $key => $label) : ?>
-                                    <th scope="col"><?= $key == 'LUCRO' ? 'B' : $key ?></th>
+                                    <th scope="col"><?= $key == 'Z' ? 'B' : $key ?></th>
                                 <?php endforeach; ?>
                             </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($simplex->getSimplexResolution() as $key => $row) : ?>
                             <tr>
-                                <?php foreach ($row as $key => $label) : ?>
+                                <?php foreach ($row as $rowKey => $label) : ?>
                                     <th scope="row"><?= $label ?></th>
                                 <?php endforeach; ?>
                             </tr>
@@ -68,7 +69,7 @@ $variables = $simplex->getFormattedResponse();
                                         <th scope="col">BASE</th>
                                             <?php $variables = $simplex->getFormattedResponse($board); ?>
                                             <?php foreach ($variables as $key => $label) : ?>
-                                                <th scope="col"><?= $key == 'LUCRO' ? 'B' : $key ?></th>
+                                                <th scope="col"><?= $key == 'Z' ? 'B' : $key ?></th>
                                             <?php endforeach; ?>
                                         </tr>
                                     </thead>

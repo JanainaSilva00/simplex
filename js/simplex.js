@@ -10,16 +10,6 @@ function nextStep() {
     restrictionFields();
 }
 
-function generateBoard() {
-    let rowsQty = variableQty + 1;
-    let columnsQty = restrictionQty * 2;
-    for (let i = 0; i < rowsQty; i++) {
-        for (let j = 0; j < columnsQty; j++) {
-            simplexBoard[i] = j;
-        }
-    }
-}
-
 function objectiveFunctionFields() {
     document.getElementById('objective_function_div').style.visibility = 'visible';
     let obElement = document.getElementById('objective_function');
@@ -28,7 +18,7 @@ function objectiveFunctionFields() {
         let inputEl = document.createElement('input');
         inputEl.setAttribute('type', 'number');
         inputEl.setAttribute('required', 'required');
-        inputEl.step = '0.00000001';
+        inputEl.step = '0.0001';
         inputEl.setAttribute('name', 'objective_function[' + i + ']');
 
         let spanEl = document.createElement('span');
@@ -54,7 +44,7 @@ function restrictionFields() {
             inputEl.setAttribute('type', 'number');
             inputEl.setAttribute('required', 'required');
 
-            inputEl.step = '0.00000001';
+            inputEl.step = '0.0001';
             inputEl.setAttribute('name', 'restriction[' + i + '][variables][' + j + ']');
 
             let spanEl = document.createElement('span');
@@ -69,6 +59,7 @@ function restrictionFields() {
         let resValueInput = document.createElement('input');
 
         resValueInput.setAttribute('type', 'number');
+        resValueInput.min = '0.001';
         resValueInput.setAttribute('name', 'restriction[' + i + '][value]');
 
         let spanValueSpan = document.createElement('span');

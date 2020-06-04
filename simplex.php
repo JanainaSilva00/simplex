@@ -12,22 +12,23 @@ class Simplex {
     protected $_boards;
     protected $_allDecisionVariables;
     protected $_allSlackVariables;
-    protected $_minMax;
+    protected $_min;
     const MAX_INTERACTION = 20;
 
+    /**
+     * Simplex constructor.
+     */
     public function __construct()
     {
         $this->_objectiveFunction = $_POST['objective_function'];
         $this->_restrictions = $_POST['restriction'];
-        $this->_minMax = $_POST['min_max'];
+        $this->_min = $_POST['min_max'];
         $this->_initialBoard();
     }
 
-    public function getTableColumnQty()
-    {
-        return $this->getVariableQty() + $this->getRestrictionQty() + 1;
-    }
-
+    /**
+     * @return int
+     */
     public function getVariableQty()
     {
         return count($this->_objectiveFunction);
@@ -36,6 +37,14 @@ class Simplex {
     public function getRestrictionQty()
     {
         return count($this->_restrictions);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMin()
+    {
+        return $this->_min;
     }
 
     /**
@@ -52,6 +61,9 @@ class Simplex {
         return end($this->_boards);
     }
 
+    /**
+     * @return mixed
+     */
     public function allBoards()
     {
         return $this->_boards;
@@ -75,7 +87,7 @@ class Simplex {
             }
         }
 
-        $result['LUCRO'] = $board[$this->getRestrictionQty()][$this->getRestrictionQty() + $this->getVariableQty() + 1];
+        $result['Z'] = $board[$this->getRestrictionQty()][$this->getRestrictionQty() + $this->getVariableQty() + 1];
         return $result;
     }
     /**
@@ -149,15 +161,19 @@ class Simplex {
      */
     protected function _getOutRow($board, $inIndex)
     {
-        $division = [];
+        $divisions = [];
         $lastColumn = count($board[0])-1;
-        for ($i = 0; $i < count($board) - 1; $i++)
-            $division[] = $board[$i][$lastColumn] / $board[$i][$inIndex];
 
-        // todo validate if min value is also positive
-        $minValue = min($division);
-        return array_search($minValue, $division);
+        for ($i = 0; $i < count($board) - 1; $i++) {
+            $divisions[] = $board[$i][$lastColumn] / $board[$i][$inIndex];
+        }
 
+        $min = max($divisions);
+        foreach ($divisions as $division) {
+            $min = $division > 0 && $min > $division ? $division : $min;
+        }
+
+        return array_search($min, $divisions);
     }
 
     /**
@@ -189,10 +205,10 @@ class Simplex {
             $board[] = $boardRow;
         }
 
-        $ofRow[] = "LUCRO (Z)";
-
+        $ofRow[] = "Z";
+        $multiple = $this->_min ? 1 : -1;
         for ($i = 0; $i < $variablesQty; $i++)
-            $ofRow[] = $this->_objectiveFunction[$i] * -1;
+            $ofRow[] = $this->_objectiveFunction[$i] * $multiple;
 
         $ofRow = array_merge($ofRow, end($slackVariables));
         $ofRow[] = 0;

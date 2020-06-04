@@ -26,9 +26,10 @@
                                 <input type="number" class="form-control" id="restriction_qty" min="1" required>
                             </div>
                             <div class="form-group col-md-4" >
-                                <select name="min_max" class="browser-default custom-select" >
-                                    <option value="1">Maximizar</option>
-                                    <option value="0">Minimizar</option>
+                                <label for="min_max">Tipo</label>
+                                <select name="min_max" id="min_max" class="browser-default custom-select" >
+                                    <option value="0">Maximizar</option>
+                                    <option value="1">Minimizar</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-4 align-self-end">
