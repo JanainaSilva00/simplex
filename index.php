@@ -45,8 +45,7 @@
                             </div>
                         </div>
 
-                        <div id="restrictions_div" clas
-                             hs="formula-div" style="visibility:hidden;">
+                        <div id="restrictions_div" class="formula-div" style="visibility:hidden;">
                             <label>Restrições</label>
                             <div id="restrictions">
                             </div>

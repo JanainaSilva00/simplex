@@ -59,7 +59,7 @@ function restrictionFields() {
         let resValueInput = document.createElement('input');
 
         resValueInput.setAttribute('type', 'number');
-        resValueInput.min = '0.001';
+        // resValueInput.min = '0.001';
         resValueInput.setAttribute('name', 'restriction[' + i + '][value]');
 
         let spanValueSpan = document.createElement('span');
