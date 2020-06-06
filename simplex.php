@@ -165,7 +165,9 @@ class Simplex {
         $lastColumn = count($board[0])-1;
 
         for ($i = 0; $i < count($board) - 1; $i++) {
-            $divisions[] = $board[$i][$lastColumn] / $board[$i][$inIndex];
+            $divisions[$i] = '';
+            if ($board[$i][$inIndex])
+                $divisions[$i] = $board[$i][$lastColumn] / $board[$i][$inIndex];
         }
 
         $min = max($divisions);

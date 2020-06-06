@@ -26,8 +26,8 @@ $multiple = $simplex->getMin() ? -1 : 1;
                     <div>
                         <h3>Solução Ótima</h3>
                         <ul class="list-group">
-
                             <?php foreach ($variables as $key => $label) : ?>
+                                <?php $label = $key == 'Z' ? $label * $multiple : $label?>
                                 <li class="list-group-item"><?= "{$key} = {$label}"?></li>
                             <?php endforeach; ?>
                         </ul>
