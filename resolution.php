@@ -4,6 +4,8 @@ $simplex = new Simplex();
 $finalBoardData = $simplex->getSimplexResolution();
 $variables = $simplex->getFormattedResponse();
 $multiple = $simplex->getMin() ? -1 : 1;
+$simplex->getSensitivityAnalysis();
+$sensibility = $simplex->getSensitivityAnalysis();
 ?>
 <!doctype html>
 <html>
@@ -74,12 +76,11 @@ $multiple = $simplex->getMin() ? -1 : 1;
                                         </tr>
                                     </thead>
                                 <tbody>
-                                        
                                     <?php foreach ($board as $key => $row) : ?>
                                         <tr>
-                                            <?php foreach ($row as $key => $label) : ?>
+                                            <?php foreach ($row as $value => $label) : ?>
                                                 <th scope="row"><?= $label ?></th>
-                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -89,6 +90,29 @@ $multiple = $simplex->getMin() ? -1 : 1;
                             <?php endforeach;?>
                         </div>
                      </div>
+
+                    <div class="sensibility">
+                        <h3>Análise de Sensibilidade</h3>
+                        <table class="table table-bordered table-light">
+                            <thead>
+                                <tr>
+                                    <?php foreach ($sensibility[0] as $labels) : ?>
+                                        <th scope="col"><?= $labels ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php unset($sensibility[0]) ?>
+                            <?php foreach ($sensibility as $row => $values) : ?>
+                                <tr>
+                                    <?php foreach ($values as $name => $value) : ?>
+                                        <th scope="row"><?= $value ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div id="resolution_button" class="d-flex justify-content-center">
                         <button type="button" onclick="window.location.href='index.php'" class="btn btn-primary first-step-button">

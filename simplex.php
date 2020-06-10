@@ -70,11 +70,11 @@ class Simplex {
     }
 
     /**
-     * Retorna as variaiveis e seus respectivos valores após finalizar o simples
+     * Retorna as variaiveis e seus respectivos valores após finalizar o simplex
      */
     public function getFormattedResponse($board = null)
     {
-        $board = $board ?: $finalBoard = end($this->_boards);
+        $board = $board ?: end($this->_boards);
         $result = [];
         $variables = array_merge($this->_allDecisionVariables, $this->_allSlackVariables);
         foreach ($variables as $variable) {
@@ -237,5 +237,118 @@ class Simplex {
         }
 
         return $slackVariables;
+    }
+
+
+    public function getSensitivityAnalysis()
+    {
+        $initialBoard = $this->_boards[0];
+        $endBoard = end($this->_boards);
+
+        $sensibilityBoard[] = [
+            'Variável',
+            'Valor Inicial',
+            'Valor Final',
+            'Recurso Escasso',
+            'Básica',
+            'Tipo de Variável',
+            'Sobra Recurso',
+            'Uso Recurso',
+            'Preço Sombra',
+            'Custo Reduzido',
+            'Aumentar parâmetro',
+            'Reduzir parâmetro',
+            'Máximo',
+            'Minimo',
+        ];
+
+
+        $initialValue = $this->getFormattedResponse($initialBoard);
+        $endValue = $this->getFormattedResponse();
+
+        $variables = array_merge($this->_allDecisionVariables, $this->_allSlackVariables);
+        $baseVars = $this->_getBaseVariables($endBoard);
+
+        $endColumn = $this->_getColumn($endBoard);
+
+        foreach ($variables as $variable) {
+            $row = [];
+            $row[] = $variable;
+            $row[] = $initialValue[$variable]; //Valor Inicial
+            $row[] = $endValue[$variable];     // Valor  Final
+            $row[] = is_numeric(strpos($variable, 'F')) ? ($endValue[$variable] == 0 ? 'Sim' : 'Não') : '-'; // Recurso Escasso
+            $row[] = in_array($variable, $baseVars) ? 'Sim' : 'Não'; // Basica
+            $row[] = in_array($variable, $this->_allDecisionVariables) ? 'Decisão' : 'Folga'; //Tipo Variavel
+            $row[] = in_array($variable, $this->_allSlackVariables) ? $endValue[$variable] : '-'; //Sobra recurso
+            $row[] = in_array($variable, $this->_allSlackVariables) ? $initialValue[$variable] - $endValue[$variable]: '-'; // uso recurso
+            $priceIndex = array_search($variable, $variables) + 1;
+            $row[] = in_array($variable, $this->_allSlackVariables) ? end($endBoard)[$priceIndex] : '-'; // preço sombra
+            $row[] = in_array($variable, $this->_allDecisionVariables) ? end($endBoard)[$priceIndex] : '-'; // custo reduzido
+            $min = '-';
+            $max = '-';
+            if (in_array($variable, $this->_allSlackVariables)) {
+                $column = $this->_getColumn($endBoard, $priceIndex);
+                $minMaxValues = $this->_getMinMaxValue($endColumn, $column);
+                $min = $minMaxValues['min'];
+                $max = $minMaxValues['max'];
+            }
+
+            $row[] = $max; // aumentar parametro
+            $row[] = $min; // reduzir parametro
+            $row[] = is_numeric($max) ? $initialValue[$variable] + $max : $max; // maximo
+            $row[] = is_numeric($min) ? $initialValue[$variable] - $min : $max; // minimo
+
+            $sensibilityBoard[$variable] = $row;
+        }
+        $sensibilityBoard['Z'] = ['LUCRO', 0, $endValue['Z'], '-', 'Sim', 'F.0', '-', '-', '-', '-', '-', '-', '-', '-'];
+
+        return $sensibilityBoard;
+    }
+
+    protected function _getMinMaxValue($endColumn, $column)
+    {
+        $divisionValues = [];
+        for ($i = 0; $i < count($endColumn) - 1; $i++) {
+            if ($column[$i] != 0) {
+                $divisionValues[] = ($endColumn[$i] / $column[$i]) * -1;
+            } else {
+                $divisionValues[] = 'INF';
+            }
+        }
+
+        $min = 'INF';
+        $max = 'INF';
+        foreach ($divisionValues as $division) {
+            if (is_numeric($division)) {
+                if ($division < 0) {
+                    $min = !is_numeric($min) ? $division : ($division < $min ? $division : $min);
+                } else {
+                    $max = !is_numeric($max) ? $division : ($division > $max ? $division : $max);
+                }
+            }
+        }
+
+        return ['min' => is_numeric($min) ? $min * -1 : 'INF', 'max' => $max];
+    }
+
+    protected function _getColumn($board, $columnIndex = null)
+    {
+        $result = [];
+        foreach ($board as $variables) {
+            $result[] = $columnIndex ? $variables[$columnIndex] : end($variables);
+        }
+
+        return $result;
+    }
+
+
+    protected function _getBaseVariables($board)
+    {
+        $result = [];
+        foreach ($board as $variables) {
+            $result[] = $variables[0];
+        }
+
+        return $result;
     }
 }
